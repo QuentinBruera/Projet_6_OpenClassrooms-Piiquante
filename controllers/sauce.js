@@ -35,14 +35,18 @@ exports.modifySauce = (req, res, next) => {
     if (req.file) {
         Sauce.findOne({ _id: req.params.id })
             .then((sauce) => {
-                // Récupère l'ancinne photo à supprimer
-                const filename = sauce.imageUrl.split("/images/")[1];
-                // Supprime l'image du dossier "../images"
-                fs.unlink(`images/${filename}`, (error) => {
-                    if (error) {
-                        console.log(error);
-                    }
-                });
+                if (sauce.userId != req.auth.userId) {
+                    res.status(401).json({ message: "Non-autorisé !" });
+                } else {
+                    // Récupère l'ancinne photo à supprimer
+                    const filename = sauce.imageUrl.split("/images/")[1];
+                    // Supprime l'image du dossier "../images"
+                    fs.unlink(`images/${filename}`, (error) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                    });
+                }
             })
             .catch((error) =>
                 res.status(404).json({ message: "Sauce non trouvé" })
