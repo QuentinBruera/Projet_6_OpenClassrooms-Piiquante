@@ -31,6 +31,24 @@ exports.modifySauce = (req, res, next) => {
           }
         : { ...req.body };
 
+    // Vérifie s'il y a une nouvelle image dans la requette, il localise et supprime l'ancienne
+    if (req.file) {
+        Sauce.findOne({ _id: req.params.id })
+            .then((sauce) => {
+                // Récupère l'ancinne photo à supprimer
+                const filename = sauce.imageUrl.split("/images/")[1];
+                // Supprime l'image du dossier "../images"
+                fs.unlink(`images/${filename}`, (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+            })
+            .catch((error) =>
+                res.status(404).json({ message: "Sauce non trouvé" })
+            );
+    }
+
     delete sauceObject._userId;
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
