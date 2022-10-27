@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 // Importation de la base de donnée depuis MongoDB
 mongoose
     .connect(
-        "mongodb+srv://ilep:lyaztupue2@cluster0.xuskphx.mongodb.net/?retryWrites=true&w=majority",
+        "mongodb+srv://ilep:lyaztupue2@cluster0.xuskphx.mongodb.net/Piiquante?retryWrites=true&w=majority",
         { useNewUrlParser: true, useUnifiedTopology: true }
     )
     .then(() => console.log("Connexion à MongoDB réussie !"))
