@@ -1,11 +1,19 @@
+// Importation du models/Sauce de la base de donnée MongoDB
 const Sauce = require("../models/Sauce");
 
+// Importation du package fs (depuis node) qui expose des méthodes pour interagir avec le système de fichiers du serveur. fs  signifie « file system » (soit « système de fichiers », en français). Il nous donne accès aux fonctions qui nous permettent de modifier le système de fichiers, y compris aux fonctions permettant de supprimer les fichiers.
 const fs = require("fs");
 
+// Middleware avec une méthode POST pour créer (poster) une nouvelle sauce
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
+
+    // On supprime l'_id de la sauce car il va être donné directement par la base de donnée MangoDB
     delete sauceObject._id;
+
+    // On supprime le champ _userId de la requête envoyée par le client car nous ne devons pas lui faire confiance (rien ne l’empêcherait de nous passer le userId d’une autre personne). On le remplace en base de données par le _userId extrait du token par le middleware d’authentification
     delete sauceObject._userId;
+
     const sauce = new Sauce({
         ...sauceObject,
         userId: req.auth.userId,
@@ -21,7 +29,9 @@ exports.createSauce = (req, res, next) => {
         .catch((error) => res.status(400).json({ error }));
 };
 
+// Middleware avec une méthode PUT pour modifier UNE sauce choisie
 exports.modifySauce = (req, res, next) => {
+    // Création de l'imageUrl si un nouvelle image est postée
     const sauceObject = req.file
         ? {
               ...JSON.parse(req.body.sauce),
@@ -31,7 +41,10 @@ exports.modifySauce = (req, res, next) => {
           }
         : { ...req.body };
 
-    // Vérifie s'il y a une nouvelle image dans la requette, il localise et supprime l'ancienne
+    // On supprime le champ _userId envoyé par le client afin d’éviter de changer son propriétaire.
+    delete sauceObject._userId;
+
+    // Si un nouvelle image est postée, localise et supprime l'ancienne
     if (req.file) {
         Sauce.findOne({ _id: req.params.id })
             .then((sauce) => {
@@ -53,7 +66,7 @@ exports.modifySauce = (req, res, next) => {
             );
     }
 
-    delete sauceObject._userId;
+    // Envoi les modifications effectué
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
@@ -72,6 +85,7 @@ exports.modifySauce = (req, res, next) => {
         .catch((error) => res.status(400).json({ error }));
 };
 
+// Middleware avec une méthode DELETE pour supprimer UNE sauce choisie
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
@@ -93,12 +107,14 @@ exports.deleteSauce = (req, res, next) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
+// Middleware avec une méthode GET pour récupérer UNE sauce choisie
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => res.status(200).json(sauce))
         .catch((error) => res.status(404).json({ error }));
 };
 
+// Middleware avec une méthode GET pour récupérer toutes les sauces
 exports.getAllSauces = (req, res, next) => {
     Sauce.find()
         .then((sauces) => res.status(200).json(sauces))

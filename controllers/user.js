@@ -1,7 +1,13 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// Importation du models/User de la base de donnée MongoDB
 const User = require("../models/User");
 
+// Importation de bcrypt depuis "../node_modules" (il faut l'importer avec npm : npm install --save bcrypt). Il sert à crypter les mots de passe.
+const bcrypt = require("bcrypt");
+
+// Importation de jsonwebtoken depuis "../node_modules" (il faut l'importer avec npm : npm install --save jsonwebtoken). Il sert à créer des TOKEN et les verifier
+const jwt = require("jsonwebtoken");
+
+// Middleware avec une méthode POST pour créer un nouveau compte utilisateur
 exports.signup = (req, res, next) => {
     bcrypt
         .hash(req.body.password, 10)
@@ -19,6 +25,7 @@ exports.signup = (req, res, next) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
+// Middleware avec une méthode POST pour ce connecter avec son compte utilisateur
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then((user) => {
@@ -46,12 +53,8 @@ exports.login = (req, res, next) => {
                             });
                         }
                     })
-                    .catch((error) => {
-                        res.status(500).json({ error });
-                    });
+                    .catch((error) => res.status(500).json({ error }));
             }
         })
-        .catch((error) => {
-            res.status(500).json({ error });
-        });
+        .catch((error) => res.status(500).json({ error }));
 };

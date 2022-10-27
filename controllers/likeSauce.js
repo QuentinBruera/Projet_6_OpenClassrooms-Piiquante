@@ -1,10 +1,8 @@
 // Importation du models/Sauce de la base de donnée MongoDB
 const Sauce = require("../models/Sauce");
 
+// Middleware avec une méthode POST pour gérer les likes/dislikes d'une sauce
 exports.likeSauce = (req, res, next) => {
-    console.log("Je suis dans le controller likeSauce");
-
-    // Affichage du req.body
     /*
     Format du req.body attendu :
     {
@@ -12,6 +10,8 @@ exports.likeSauce = (req, res, next) => {
     "like": Number (-1 || 0 || 1)
     }
     */
+
+    // Affichage du req.body
     console.log("--> Contenu req.body - likeSauce");
     console.log(req.body);
 
@@ -28,9 +28,6 @@ exports.likeSauce = (req, res, next) => {
         .then((sauce) => {
             console.log("--> Contenu résultat de la promesse");
             console.log(sauce);
-
-            // Méthode JavaScript includes()
-            // Opérateur mangoDB : $inc, $push, $pull
 
             // Vérifie si userId == userId du TOKEN
             if (req.body.userId != req.auth.userId) {
@@ -53,7 +50,7 @@ exports.likeSauce = (req, res, next) => {
                             }
                         )
                             .then(() =>
-                                res.status(201).json({ message: "like -1" })
+                                res.status(201).json({ message: "like 1" })
                             )
                             .catch((error) => res.status(400).json({ error }));
                     } else {

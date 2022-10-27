@@ -1,11 +1,13 @@
 // Importation d'express
 const express = require("express");
 
+// Importation du middleware d'authentification
 const auth = require("../middleware/auth");
 
-// La fonction Router()
+// Création du router
 const router = express.Router();
 
+// Importation de la configuration de multer pour gérer les images
 const multer = require("../middleware/multer-config");
 
 // Importation du controller/sauce.js
@@ -23,5 +25,5 @@ router.get("/", auth, sauceCtrl.getAllSauces);
 
 router.post("/:id/like", auth, likeCtrl.likeSauce);
 
-// Exportation du module
+// Exportation du module des routes
 module.exports = router;
