@@ -49,7 +49,7 @@ exports.modifySauce = (req, res, next) => {
         Sauce.findOne({ _id: req.params.id })
             .then((sauce) => {
                 if (sauce.userId != req.auth.userId) {
-                    res.status(401).json({ message: "Non-autorisé !" });
+                    res.status(403).json({ message: "unauthorized request" });
                 } else {
                     // Récupère l'ancinne photo à supprimer
                     const filename = sauce.imageUrl.split("/images/")[1];
@@ -70,7 +70,7 @@ exports.modifySauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
-                res.status(401).json({ message: "Non-autorisé !" });
+                res.status(403).json({ message: "unauthorized request" });
             } else {
                 Sauce.updateOne(
                     { _id: req.params.id },
@@ -90,7 +90,7 @@ exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
-                res.status(401).json({ message: "Non-autorisé !" });
+                res.status(403).json({ message: "unauthorized request" });
             } else {
                 const filename = sauce.imageUrl.split("/images/")[1];
                 fs.unlink(`images/${filename}`, () => {

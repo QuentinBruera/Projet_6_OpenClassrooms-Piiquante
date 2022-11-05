@@ -1,23 +1,30 @@
 // Importation du framework express depuis "./node_modules"
 const express = require("express");
 
+// const helmet = require("helmet");
+
+// Importation du package dotenv depuis "./node_modules" (il faut l'importer avec npm : npm install dotenv --save ). Il sert à utiliser le fichier ".env" pour sécuriser l'accé à la base de donnée
+require("dotenv").config();
+// console.log(process.env.DATA_BASE);
+
 // Importation de mongoose depuis "./node_modules" (il faut l'importer avec npm : npm install mongoose). Il sert à faire le lien avec la base de donnée de MongoDB et le site
 const mongoose = require("mongoose");
 
 // Importation de la base de donnée depuis MongoDB
 mongoose
-    .connect(
-        "mongodb+srv://ilep:lyaztupue2@cluster0.xuskphx.mongodb.net/Piiquante?retryWrites=true&w=majority",
-        { useNewUrlParser: true, useUnifiedTopology: true }
-    )
+    .connect(`${process.env.DATA_BASE}`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
     .then(() => console.log("Connexion à MongoDB réussie !"))
     .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 // Cette variable sert à créer une application express
 const app = express();
-
 //  Pour gérer la requête POST venant de l'application front-end, on a besoin d'en extraire le corps JSON. Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
 app.use(express.json());
+
+// app.use(helmet());
 
 /*
 !--- BODYPARSER fait la même chose que "app.use(express.json())" mais c'est un veille façon de faire ---!
